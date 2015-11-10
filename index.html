@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <style>
+        #result {
+    margin: 10px;
+    background: #eee;
+    padding: 10px;
+    height: 40px;
+    overflow: auto;
+}
+    </style>
+    <script>
+        var checknumber = 1;
+        var textboxcheck = 1;
+        var pwdcheck = 1;
+        var radcheck = 1;
+        
+        var textboxbool = false;
+        var pwdboolcheck = false;
+        
+        var array = [];
+        var localdata = [];
+
+
+        function addtextbox()
+        {
+            textboxbool=true;
+            var y = document.createElement("INPUT");
+            y.setAttribute("type", Text);
+            
+            var data = prompt("Please enter your text");
+            y.setAttribute("value", data);
+            y.setAttribute("id", "textbox" + textboxcheck);
+            array = array + { textbox: data };
+            document.getElementById("myform").appendChild(y);
+            var br = document.createElement("br");
+            document.getElementById("myform").appendChild(br);
+            textboxcheck++;
+        }
+        function addpwd() {
+            pwdboolcheck = true;
+            var y = document.createElement("INPUT");
+            y.setAttribute("type", Text);
+            y.setAttribute("value", "textbox");
+            document.getElementById("myform").appendChild(y);
+            var z = document.createElement("INPUT");
+            z.setAttribute("type","password");
+            z.setAttribute("pattern", "*");
+            z.setAttribute("id", "pwd" + pwdcheck);
+            var data = prompt("Please enter your password");
+            z.setAttribute("value", data);
+            array = array + { password: data };
+            z.setAttribute("value", data);
+            document.getElementById("myform").appendChild(z);
+            var br = document.createElement("br");
+            document.getElementById("myform").appendChild(br);
+            pwdcheck++;
+        }
+        function addradio() {
+            var z = document.createElement("INPUT");
+            z.setAttribute("type", "radio");
+            z.setAttribute("value", "radio1");
+            var y = document.createElement("INPUT");
+            y.setAttribute("type", Text);
+            y.setAttribute("value", data);
+            y.setAttribute("checked", "checked");
+            var data = prompt("Please enter your button's name");
+            y.setAttribute("value", data);
+            array = array + { radiobutton:data  } ;
+            document.getElementById("myform").appendChild(y);
+          
+            document.getElementById("myform").appendChild(z);
+            var br = document.createElement("br");
+            document.getElementById("myform").appendChild(br);
+            radcheck++;
+        }
+        function addcheck() {
+            var z = document.createElement("INPUT");
+            z.setAttribute("type", "checkbox");
+            var checknumberstring="checkbox" +checknumber;
+            z.setAttribute("value", checknumberstring);
+            var y = document.createElement("INPUT");
+            y.setAttribute("type", Text);
+            y.setAttribute("value", "textbox");
+            document.getElementById("myform").appendChild(y);
+
+            document.getElementById("myform").appendChild(z);
+            var br = document.createElement("br");
+            document.getElementById("myform").appendChild(br);
+            checknumber = checknumber + 1;
+        }
+        function addfile() {
+            var y = document.createElement("INPUT");
+            y.setAttribute("type", "file");
+            y.setAttribute("accept", "image/*");
+            document.getElementById("myform").appendChild(y);
+
+            
+            
+            array = array + { file: y.src };
+
+            document.getElementById("myform").appendChild(z);
+            var br = document.createElement("br");
+            document.getElementById("myform").appendChild(br);
+            
+        }
+        function save() {
+            localStorage.setItem('myform',JSON.stringify(array))
+
+        }
+
+        function validatedata()
+        {
+            //validatetextbox();
+            //validatepwdbox();
+            var $form = $("#myform");
+            var data = getFormData($form);
+            $('#result').text(JSON.stringify($('myform').serializeObject()));
+            document.getElementById("result").innerHTML = data;
+        }
+
+        $.fn.serializeObject = function () {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        function validatetextbox()
+        {
+            for (var i = 1; i <= textboxcheck && textboxbool ; i++) {
+                var x = document.forms["myform"]["textbox" + i].value;
+                if (x == null || x == "") {
+                    alert("All textboxes must be filled out");
+                }
+            }
+        }
+        function validatepwdbox()
+        {
+            for (var i = 1; i <= pwdcheck && pwdboolcheck ; i++) {
+                var x = document.forms["myform"]["pwd" + i].value;
+                if (x == null || x == "") {
+                    alert("All Passwords must be filled");
+                }
+                if (x.length < 6)
+                {
+                    alert("Error: Password must contain at least six characters!");
+                }
+                
+            }
+        }
+
+
+        function readdata()
+        {
+            var formdata = JSON.parse(localStorage.getItem('myform'));
+            if (formdata !== null)
+            {
+                localdata = formdata;
+                document.getElementById("options").innerHTML = localdata[0];
+                rebuildform(formdata);
+            }
+        }
+        function rebuildform(data) {
+
+        }
+
+
+
+
+
+    </script>
+    <script>
+    $(document).ready(function () {
+        $("button").click(function () {
+            $("#butt").hide();
+            $("#myform").show();
+            $("#subbutton").show();
+            $("#options").show();
+
+        });
+    });
+    </script>
+  <script>
+      function getFormData($form) {
+          var unindexed_array = $form.serializeArray();
+          var indexed_array = {};
+
+          $.map(unindexed_array, function (n, i) {
+              indexed_array[n['name']] = n['value'];
+          });
+
+          return indexed_array;
+      }
+  </script>
+</head>
+<body >
+    <button id="butt" >
+        Create a new form
+    </button>
+
+    <div id="options" hidden="hidden">
+        <button   onclick="addtextbox()"> Add Textbox</button>
+        <button   onclick="addpwd()"> Add password</button>
+        <button   onclick="addradio()"> Add RadioButtons</button>
+        <button onclick="addcheck()">Add check Box</button>
+        <button onclick="addfile()">Add File</button>
+
+
+    </div>
+    <form id="myform" hidden="hidden" >
+        <h1>
+            Form Name :
+            <input type="text" name="formname" />
+            
+        </h1>
+
+        
+    </form>
+    <input id="subbutton" type="submit" value="submit" onclick="validatedata()" hidden="hidden" />
+    <input id="localdata" type="submit" value="Read from local data" onclick="readdata"  />
+
+    <br />
+    <pre id="result">
+</pre>
+   
+</body>
+</html>
